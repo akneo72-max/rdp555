@@ -1,4 +1,4 @@
-name: 🚀 RDP555 ULTRA PERFORMANCE (LIGHTNING FAST)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10)
 
 on:
   workflow_dispatch:
@@ -8,10 +8,7 @@ on:
         required: false
         default: '6h'
         type: choice
-        options:
-        - '1h'
-        - '3h'
-        - '6h'
+        options: ['1h', '3h', '6h']
 
 jobs:
   RDP-Setup:
@@ -19,88 +16,114 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING SYSTEM
-        run: |
-          Write-Host "🤖 RDP555 ULTRA MODE STARTING" -ForegroundColor Yellow
-          Write-Host "🕒 Duration: ${{ github.event.inputs.duration }}" -ForegroundColor Magenta
+      - name: 🎯 INITIALIZING GOD-MODE SYSTEM
+        run: Write-Host "🚀 STARTING THE MOST POWERFUL RDP CONFIGURATION..." -ForegroundColor Cyan
 
-      - name: ⚡ ULTRA PERFORMANCE & LATENCY TWEAKS
+      - name: 🏎️ ULTIMATE CPU & POWER TWEAKS
         run: |
-          Write-Host "🚀 Applying Lightning Fast Tweaks..." -ForegroundColor Cyan
+          Write-Host "⚡ Setting CPU to Maximum Power..." -ForegroundColor Yellow
+          # تفعيل خطة الأداء الأقصى وإلغاء كافة قيود الطاقة
+          powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
+          powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+          powercfg /setacvalueindex scheme_current sub_processor perfboostmode 2
           
-          # 1. إزالة علامة Test Mode
+          # منع المعالج من الـ Throttling نهائياً
+          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
+          Write-Host "✅ CPU is now Unlocked!" -ForegroundColor Green
+
+      - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
+        run: |
+          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
+          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
+          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=24576,MaximumSize=32768
+          
+          # تحسين استجابة النظام للأوامر البرمجية
+          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          Write-Host "✅ Memory Boosted!" -ForegroundColor Green
+
+      - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
+        run: |
+          Write-Host "💽 Creating 3 Giant Virtual Disks..." -ForegroundColor Yellow
+          @"
+          create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
+          attach vdisk
+          create partition primary
+          format fs=ntfs quick label="TITAN_34TB"
+          assign letter=E
+          create vdisk file="C:\Disk_12TB.vhd" maximum=12582912 type=expandable
+          attach vdisk
+          create partition primary
+          format fs=ntfs quick label="MID_12TB"
+          assign letter=F
+          create vdisk file="C:\Disk_2TB.vhd" maximum=2097152 type=expandable
+          attach vdisk
+          create partition primary
+          format fs=ntfs quick label="DEV_2TB"
+          assign letter=G
+          "@ | diskpart
+          Write-Host "✅ 48TB Storage Ready!" -ForegroundColor Green
+
+      - name: 🧹 EXTREME DEBLOAT & WATERMARK REMOVAL
+        run: |
+          Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
+          # إيقاف كافة الخدمات غير الضرورية
+          $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler", "vmicguestinterface")
+          foreach($s in $services) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          
+          # إزالة علامة Test Mode ونسخة الويندوز
+          reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
           bcdedit /set testsigning off
           
-          # 2. تسريع استجابة القوائم والواجهة (Visual Tweaks)
-          $regPaths = @(
-              "HKCU:\Control Panel\Desktop",
-              "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects"
-          )
-          Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Value "0"
-          Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))
-          
-          # 3. تحسين استهلاك المعالج للأداء العالي (High Performance Power Plan)
-          powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-          
-          # 4. تحسين استجابة الشبكة وتقليل الـ Lag في RDP
-          netsh int tcp set global autotuninglevel=highlyrestricted
-          netsh int tcp set global chimney=enabled
-          netsh int tcp set global dca=enabled
-          netsh int tcp set global netdma=enabled
-          
-          # 5. تعطيل الخدمات الثقيلة جداً
-          $heavyServices = @("SysMain", "DiagTrack", "WSearch", "SDRSVC", "WerSvc")
-          foreach($service in $heavyServices) {
-              Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
-              Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
-          }
-          
-          Write-Host "✅ System is now optimized for Speed!" -ForegroundColor Green
+          # تسريع الواجهة (إيقاف الحركات والظلال)
+          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
+          Write-Host "✅ System Cleaned!" -ForegroundColor Green
 
-      - name: ⚙️ CONFIGURING RDP (LOW LATENCY)
+      - name: 📡 NETWORK ROCKET (ZERO LATENCY)
         run: |
-          Write-Host "🛠️ Setting up Low Latency RDP..." -ForegroundColor Yellow
+          Write-Host "📡 Optimizing Network for Remote Control..." -ForegroundColor Cyan
+          netsh int tcp set global autotuninglevel=experimental
+          netsh int tcp set global congestionprovider=ctcp
+          netsh int tcp set global ecncapability=enabled
+          netsh int tcp set global timestamps=disabled
+          netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
+          Write-Host "✅ Network is now Lightning Fast!" -ForegroundColor Green
+
+      - name: 🛠️ PRE-INSTALLING PRO TOOLS (CHOCO)
+        run: |
+          Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
+          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          # تثبيت متصفح Brave و VS Code و 7-Zip تلقائياً
+          choco install brave vscode 7zip -y
+          Write-Host "✅ Tools Installed!" -ForegroundColor Green
+
+      - name: ⚙️ FINALIZING RDP CONFIG
+        run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
-          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "MinEncryptionLevel" -Value 1
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
-          Start-Service -Name TermService -ErrorAction SilentlyContinue
-          Write-Host "✅ RDP Ready!" -ForegroundColor Green
+          # إعادة تشغيل الـ Explorer لتفعيل التغييرات
+          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+          Start-Service TermService -ErrorAction SilentlyContinue
 
-      - name: 👤 CREATING USER
+      - name: 👤 CREATING GOD-MODE USER
         run: |
-          Write-Host "👤 Creating user 'rdp555'..." -ForegroundColor Yellow
           $Password = ConvertTo-SecureString "BASHAR12!" -AsPlainText -Force
-          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires -Description "Ultra Fast RDP User"
+          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
-          Write-Host "✅ User created!" -ForegroundColor Green
 
-      - name: 🌐 SETTING UP NETWORK (TAILSCALE)
+      - name: 🌐 TAILSCALE CONNECTION
         env:
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
         run: |
-          if (-not $env:TAILSCALE_AUTH_KEY) {
-              Write-Host "❌ Error: TAILSCALE_AUTH_KEY secret is missing!" -ForegroundColor Red
-              exit 1
-          }
-          Write-Host "🌐 Installing Tailscale..." -ForegroundColor Yellow
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          Start-Sleep -Seconds 5
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-ultra --accept-routes
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-godmode
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "------------------------------------------" -ForegroundColor Cyan
-          Write-Host "🌐 IP ADDRESS: $ip" -ForegroundColor White
-          Write-Host "👤 USERNAME: rdp555" -ForegroundColor White
-          Write-Host "🔐 PASSWORD: BASHAR12!" -ForegroundColor White
+          Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
           Write-Host "------------------------------------------" -ForegroundColor Cyan
 
       - name: ♾️ KEEP ALIVE
-        run: |
-          $limit = 350
-          Write-Host "🚀 ULTRA RDP ACTIVE. Enjoy the speed!" -ForegroundColor Green
-          for ($i = 1; $i -le $limit; $i++) {
-              Start-Sleep -Seconds 60
-          }
+        run: for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
