@@ -49,8 +49,9 @@ jobs:
 
       - name: 👤 CREATING USER
         run: |
-          Write-Host "👤 Creating user 'rdp555' with password 'BASHAR12'..." -ForegroundColor Yellow
-          $Password = ConvertTo-SecureString "BASHAR12" -AsPlainText -Force
+          Write-Host "👤 Creating user 'rdp555' with password 'BASHAR12!'..." -ForegroundColor Yellow
+          # تم إضافة ! في نهاية كلمة السر لتجاوز سياسة حماية ويندوز
+          $Password = ConvertTo-SecureString "BASHAR12!" -AsPlainText -Force
           New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires -Description "High Performance RDP User"
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
@@ -76,7 +77,7 @@ jobs:
           Write-Host "------------------------------------------" -ForegroundColor Cyan
           Write-Host "🌐 IP ADDRESS: $ip" -ForegroundColor White
           Write-Host "👤 USERNAME: rdp555" -ForegroundColor White
-          Write-Host "🔐 PASSWORD: BASHAR12" -ForegroundColor White
+          Write-Host "🔐 PASSWORD: BASHAR12!" -ForegroundColor White
           Write-Host "------------------------------------------" -ForegroundColor Cyan
 
       - name: ♾️ KEEP ALIVE
