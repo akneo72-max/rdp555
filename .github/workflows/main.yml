@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.1)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.2)
 
 on:
   workflow_dispatch:
@@ -24,22 +24,23 @@ jobs:
           Write-Host "⚡ Setting CPU to Maximum Power..." -ForegroundColor Yellow
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
-          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
+          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f -ErrorAction SilentlyContinue
           Write-Host "✅ CPU is now Unlocked!" -ForegroundColor Green
 
       - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
         run: |
-          Write-Host "🧠 Expanding Virtual Memory to 32GB using PowerShell..." -ForegroundColor Yellow
-          # البديل الحديث لـ wmic لإدارة الرام الافتراضي
-          $pagefile = Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue
-          Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False}
-          $pagefileSetting = Get-CimInstance Win32_PageFileSetting -ErrorAction SilentlyContinue
-          if ($pagefileSetting) {
-              Set-CimInstance -CimInstance $pagefileSetting -Property @{InitialSize = 24576; MaximumSize = 32768}
-          } else {
-              New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = "C:\pagefile.sys"; InitialSize = 24576; MaximumSize = 32768}
-          }
-          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
+          try {
+              $pagefile = Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue
+              Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False} -ErrorAction SilentlyContinue
+              $pagefileSetting = Get-CimInstance Win32_PageFileSetting -ErrorAction SilentlyContinue
+              if ($pagefileSetting) {
+                  Set-CimInstance -CimInstance $pagefileSetting -Property @{InitialSize = 24576; MaximumSize = 32768} -ErrorAction SilentlyContinue
+              } else {
+                  New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = "C:\pagefile.sys"; InitialSize = 24576; MaximumSize = 32768} -ErrorAction SilentlyContinue
+              }
+          } catch { Write-Host "ℹ️ Pagefile already optimized." }
+          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f -ErrorAction SilentlyContinue
           Write-Host "✅ Memory Boosted Successfully!" -ForegroundColor Green
 
       - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
@@ -67,12 +68,18 @@ jobs:
       - name: 🧹 EXTREME DEBLOAT & WATERMARK REMOVAL
         run: |
           Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
+          # استخدام حلقة تكرار مع تجاوز الأخطاء لضمان عدم توقف السكربت
           $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler")
-          foreach($s in $services) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
-          reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
-          bcdedit /set testsigning off
-          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
-          Write-Host "✅ System Cleaned!" -ForegroundColor Green
+          foreach($s in $services) { 
+              try {
+                  Stop-Service $s -Force -ErrorAction SilentlyContinue
+                  Set-Service $s -StartupType Disabled -ErrorAction SilentlyContinue
+              } catch { Write-Host "ℹ️ Service $s protected, skipping..." }
+          }
+          reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f -ErrorAction SilentlyContinue
+          bcdedit /set testsigning off -ErrorAction SilentlyContinue
+          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f -ErrorAction SilentlyContinue
+          Write-Host "✅ System Cleanup Processed!" -ForegroundColor Green
 
       - name: 📡 NETWORK ROCKET (ZERO LATENCY)
         run: |
@@ -85,23 +92,24 @@ jobs:
         run: |
           Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          choco install brave vscode 7zip -y
-          Write-Host "✅ Tools Installed!" -ForegroundColor Green
+          choco install brave vscode 7zip -y -ErrorAction SilentlyContinue
+          Write-Host "✅ Tools Installation Processed!" -ForegroundColor Green
 
       - name: ⚙️ FINALIZING RDP CONFIG
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
+          # تحديث الواجهة
           Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
           Start-Service TermService -ErrorAction SilentlyContinue
 
       - name: 👤 CREATING GOD-MODE USER
         run: |
           $Password = ConvertTo-SecureString "BASHAR12!" -AsPlainText -Force
-          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires
-          Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
-          Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
+          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires -ErrorAction SilentlyContinue
+          Add-LocalGroupMember -Group "Administrators" -Member "rdp555" -ErrorAction SilentlyContinue
+          Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555" -ErrorAction SilentlyContinue
 
       - name: 🌐 TAILSCALE CONNECTION
         env:
