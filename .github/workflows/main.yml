@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.4)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.5)
 
 on:
   workflow_dispatch:
@@ -17,21 +17,22 @@ jobs:
     
     steps:
       - name: 🎯 INITIALIZING GOD-MODE SYSTEM
-        run: Write-Host "🚀 STARTING THE MOST POWERFUL RDP CONFIGURATION..." -ForegroundColor Cyan
+        run: |
+          Write-Host "🚀 STARTING THE MOST POWERFUL RDP CONFIGURATION..." -ForegroundColor Cyan
+          exit 0
 
       - name: 🏎️ ULTIMATE CPU & POWER TWEAKS
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "⚡ Setting CPU to Maximum Power..." -ForegroundColor Yellow
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
           reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
           Write-Host "✅ CPU Unlocked!" -ForegroundColor Green
+          exit 0
 
       - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
           $pagefile = Get-CimInstance Win32_ComputerSystem
           Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False}
           $pagefileSetting = Get-CimInstance Win32_PageFileSetting
@@ -42,11 +43,11 @@ jobs:
           }
           reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
           Write-Host "✅ Memory Boosted!" -ForegroundColor Green
+          exit 0
 
       - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "💽 Creating 3 Giant Virtual Disks..." -ForegroundColor Yellow
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
           attach vdisk
@@ -65,11 +66,11 @@ jobs:
           assign letter=G
           "@ | diskpart
           Write-Host "✅ 48TB Storage Ready!" -ForegroundColor Green
+          exit 0
 
       - name: 🧹 EXTREME DEBLOAT & WATERMARK REMOVAL
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
           $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler")
           foreach($s in $services) { 
               Stop-Service $s -Force
@@ -79,22 +80,23 @@ jobs:
           bcdedit /set testsigning off
           reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
           Write-Host "✅ System Cleanup Processed!" -ForegroundColor Green
+          exit 0
 
       - name: 📡 NETWORK ROCKET (ZERO LATENCY)
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "📡 Optimizing Network..." -ForegroundColor Cyan
           netsh int tcp set global autotuninglevel=experimental
           netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
           Write-Host "✅ Network Optimized!" -ForegroundColor Green
+          exit 0
 
       - name: 🛠️ PRE-INSTALLING PRO TOOLS (CHOCO)
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           choco install brave vscode 7zip -y
           Write-Host "✅ Tools Installation Processed!" -ForegroundColor Green
+          exit 0
 
       - name: ⚙️ FINALIZING RDP CONFIG
         run: |
@@ -105,6 +107,7 @@ jobs:
           Stop-Process -Name explorer -Force
           Start-Service TermService
           Write-Host "✅ RDP Finalized!" -ForegroundColor Green
+          exit 0
 
       - name: 👤 CREATING GOD-MODE USER
         run: |
@@ -114,6 +117,7 @@ jobs:
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
           Write-Host "✅ User Created!" -ForegroundColor Green
+          exit 0
 
       - name: 🌐 TAILSCALE CONNECTION
         env:
@@ -126,6 +130,9 @@ jobs:
           & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-godmode
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
+          exit 0
 
       - name: ♾️ KEEP ALIVE
-        run: for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
+        run: |
+          for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
+          exit 0
