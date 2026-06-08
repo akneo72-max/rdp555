@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.1)
 
 on:
   workflow_dispatch:
@@ -22,24 +22,25 @@ jobs:
       - name: 🏎️ ULTIMATE CPU & POWER TWEAKS
         run: |
           Write-Host "⚡ Setting CPU to Maximum Power..." -ForegroundColor Yellow
-          # تفعيل خطة الأداء الأقصى وإلغاء كافة قيود الطاقة
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
-          powercfg /setacvalueindex scheme_current sub_processor perfboostmode 2
-          
-          # منع المعالج من الـ Throttling نهائياً
           reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
           Write-Host "✅ CPU is now Unlocked!" -ForegroundColor Green
 
       - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
         run: |
-          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
-          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
-          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=24576,MaximumSize=32768
-          
-          # تحسين استجابة النظام للأوامر البرمجية
+          Write-Host "🧠 Expanding Virtual Memory to 32GB using PowerShell..." -ForegroundColor Yellow
+          # البديل الحديث لـ wmic لإدارة الرام الافتراضي
+          $pagefile = Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue
+          Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False}
+          $pagefileSetting = Get-CimInstance Win32_PageFileSetting -ErrorAction SilentlyContinue
+          if ($pagefileSetting) {
+              Set-CimInstance -CimInstance $pagefileSetting -Property @{InitialSize = 24576; MaximumSize = 32768}
+          } else {
+              New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = "C:\pagefile.sys"; InitialSize = 24576; MaximumSize = 32768}
+          }
           reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
-          Write-Host "✅ Memory Boosted!" -ForegroundColor Green
+          Write-Host "✅ Memory Boosted Successfully!" -ForegroundColor Green
 
       - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
         run: |
@@ -66,33 +67,24 @@ jobs:
       - name: 🧹 EXTREME DEBLOAT & WATERMARK REMOVAL
         run: |
           Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
-          # إيقاف كافة الخدمات غير الضرورية
-          $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler", "vmicguestinterface")
+          $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler")
           foreach($s in $services) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
-          
-          # إزالة علامة Test Mode ونسخة الويندوز
           reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
           bcdedit /set testsigning off
-          
-          # تسريع الواجهة (إيقاف الحركات والظلال)
           reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
           Write-Host "✅ System Cleaned!" -ForegroundColor Green
 
       - name: 📡 NETWORK ROCKET (ZERO LATENCY)
         run: |
-          Write-Host "📡 Optimizing Network for Remote Control..." -ForegroundColor Cyan
           netsh int tcp set global autotuninglevel=experimental
           netsh int tcp set global congestionprovider=ctcp
-          netsh int tcp set global ecncapability=enabled
-          netsh int tcp set global timestamps=disabled
           netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
-          Write-Host "✅ Network is now Lightning Fast!" -ForegroundColor Green
+          Write-Host "✅ Network Optimized!" -ForegroundColor Green
 
       - name: 🛠️ PRE-INSTALLING PRO TOOLS (CHOCO)
         run: |
           Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          # تثبيت متصفح Brave و VS Code و 7-Zip تلقائياً
           choco install brave vscode 7zip -y
           Write-Host "✅ Tools Installed!" -ForegroundColor Green
 
@@ -101,7 +93,6 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
-          # إعادة تشغيل الـ Explorer لتفعيل التغييرات
           Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
           Start-Service TermService -ErrorAction SilentlyContinue
 
@@ -121,9 +112,7 @@ jobs:
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
           & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-godmode
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
-          Write-Host "------------------------------------------" -ForegroundColor Cyan
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
-          Write-Host "------------------------------------------" -ForegroundColor Cyan
 
       - name: ♾️ KEEP ALIVE
         run: for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
