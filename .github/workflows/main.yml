@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.3)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.4)
 
 on:
   workflow_dispatch:
@@ -21,19 +21,17 @@ jobs:
 
       - name: 🏎️ ULTIMATE CPU & POWER TWEAKS
         run: |
+          $ErrorActionPreference = 'SilentlyContinue'
           Write-Host "⚡ Setting CPU to Maximum Power..." -ForegroundColor Yellow
-          # تفعيل خطة الأداء الأقصى
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
-          
-          # تعطيل الـ Power Throttling (صيغة صحيحة)
           reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
-          Write-Host "✅ CPU is now Unlocked!" -ForegroundColor Green
+          Write-Host "✅ CPU Unlocked!" -ForegroundColor Green
 
       - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
         run: |
-          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
           $ErrorActionPreference = 'SilentlyContinue'
+          Write-Host "🧠 Expanding Virtual Memory to 32GB..." -ForegroundColor Yellow
           $pagefile = Get-CimInstance Win32_ComputerSystem
           Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False}
           $pagefileSetting = Get-CimInstance Win32_PageFileSetting
@@ -43,10 +41,11 @@ jobs:
               New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = "C:\pagefile.sys"; InitialSize = 24576; MaximumSize = 32768}
           }
           reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
-          Write-Host "✅ Memory Boosted Successfully!" -ForegroundColor Green
+          Write-Host "✅ Memory Boosted!" -ForegroundColor Green
 
       - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
         run: |
+          $ErrorActionPreference = 'SilentlyContinue'
           Write-Host "💽 Creating 3 Giant Virtual Disks..." -ForegroundColor Yellow
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
@@ -69,8 +68,8 @@ jobs:
 
       - name: 🧹 EXTREME DEBLOAT & WATERMARK REMOVAL
         run: |
-          Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
           $ErrorActionPreference = 'SilentlyContinue'
+          Write-Host "🧹 Stripping Windows & Hiding Watermarks..." -ForegroundColor Yellow
           $services = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes", "Spooler")
           foreach($s in $services) { 
               Stop-Service $s -Force
@@ -83,26 +82,29 @@ jobs:
 
       - name: 📡 NETWORK ROCKET (ZERO LATENCY)
         run: |
+          $ErrorActionPreference = 'SilentlyContinue'
+          Write-Host "📡 Optimizing Network..." -ForegroundColor Cyan
           netsh int tcp set global autotuninglevel=experimental
-          netsh int tcp set global congestionprovider=ctcp
           netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
           Write-Host "✅ Network Optimized!" -ForegroundColor Green
 
       - name: 🛠️ PRE-INSTALLING PRO TOOLS (CHOCO)
         run: |
-          Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
           $ErrorActionPreference = 'SilentlyContinue'
+          Write-Host "📦 Installing Essential Pro Tools..." -ForegroundColor Yellow
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           choco install brave vscode 7zip -y
           Write-Host "✅ Tools Installation Processed!" -ForegroundColor Green
 
       - name: ⚙️ FINALIZING RDP CONFIG
         run: |
+          $ErrorActionPreference = 'SilentlyContinue'
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
-          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-          Start-Service TermService -ErrorAction SilentlyContinue
+          Stop-Process -Name explorer -Force
+          Start-Service TermService
+          Write-Host "✅ RDP Finalized!" -ForegroundColor Green
 
       - name: 👤 CREATING GOD-MODE USER
         run: |
@@ -111,11 +113,13 @@ jobs:
           New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
+          Write-Host "✅ User Created!" -ForegroundColor Green
 
       - name: 🌐 TAILSCALE CONNECTION
         env:
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
         run: |
+          $ErrorActionPreference = 'SilentlyContinue'
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
