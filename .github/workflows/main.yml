@@ -1,4 +1,4 @@
-name: 🚀 RDP555 EXTREME ROCKET MODE (V3)
+name: 🚀 RDP555 ULTRA PERFORMANCE (LIGHTNING FAST)
 
 on:
   workflow_dispatch:
@@ -8,7 +8,10 @@ on:
         required: false
         default: '6h'
         type: choice
-        options: ['1h', '3h', '6h']
+        options:
+        - '1h'
+        - '3h'
+        - '6h'
 
 jobs:
   RDP-Setup:
@@ -16,71 +19,88 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING EXTREME SYSTEM
-        run: Write-Host "🚀 STARTING ROCKET MODE..." -ForegroundColor Cyan
-
-      - name: 🏎️ HARDWARE & RAM OPTIMIZATION (VIRTUAL RAM BOOST)
+      - name: 🎯 INITIALIZING SYSTEM
         run: |
-          Write-Host "🧠 Boosting Virtual RAM and CPU Priority..." -ForegroundColor Yellow
-          # زيادة الـ PageFile (الرام الافتراضي) ليعطي ثباتاً في المهام الثقيلة
-          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
-          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=12288,MaximumSize=16384
+          Write-Host "🤖 RDP555 ULTRA MODE STARTING" -ForegroundColor Yellow
+          Write-Host "🕒 Duration: ${{ github.event.inputs.duration }}" -ForegroundColor Magenta
+
+      - name: ⚡ ULTRA PERFORMANCE & LATENCY TWEAKS
+        run: |
+          Write-Host "🚀 Applying Lightning Fast Tweaks..." -ForegroundColor Cyan
           
-          # جعل المعالج يركز 100% على البرامج (Background Services Priority)
-          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          # 1. إزالة علامة Test Mode
+          bcdedit /set testsigning off
           
-          # تعطيل استهلاك الرام في الـ Cache غير الضروري
-          reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Memory Management" /v LargeSystemCache /t REG_DWORD /d 0 /f
-          Write-Host "✅ Hardware Tweaks Applied!" -ForegroundColor Green
-
-      - name: 🧹 TOTAL DEBLOAT (REMOVING EVERYTHING USELESS)
-        run: |
-          Write-Host "🧹 Stripping Windows to the bone..." -ForegroundColor Yellow
-          # إيقاف خدمات التحديث والبحث والتقارير نهائياً
-          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "StiSvc", "Themes")
-          foreach($s in $kill) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          # 2. تسريع استجابة القوائم والواجهة (Visual Tweaks)
+          $regPaths = @(
+              "HKCU:\Control Panel\Desktop",
+              "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects"
+          )
+          Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Value "0"
+          Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))
           
-          # إزالة كافة تطبيقات ويندوز المزعجة دفعة واحدة
-          Get-AppxPackage -AllUsers | where {$_.Name -notlike "*Calculator*" -and $_.Name -notlike "*Paint*"} | Remove-AppxPackage -ErrorAction SilentlyContinue
-          Write-Host "✅ System is now Lightweight!" -ForegroundColor Green
+          # 3. تحسين استهلاك المعالج للأداء العالي (High Performance Power Plan)
+          powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+          
+          # 4. تحسين استجابة الشبكة وتقليل الـ Lag في RDP
+          netsh int tcp set global autotuninglevel=highlyrestricted
+          netsh int tcp set global chimney=enabled
+          netsh int tcp set global dca=enabled
+          netsh int tcp set global netdma=enabled
+          
+          # 5. تعطيل الخدمات الثقيلة جداً
+          $heavyServices = @("SysMain", "DiagTrack", "WSearch", "SDRSVC", "WerSvc")
+          foreach($service in $heavyServices) {
+              Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+              Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
+          }
+          
+          Write-Host "✅ System is now optimized for Speed!" -ForegroundColor Green
 
-      - name: 🛰️ ZERO-LATENCY NETWORK TWEAKS
+      - name: ⚙️ CONFIGURING RDP (LOW LATENCY)
         run: |
-          Write-Host "📡 Optimizing Network for Rocket Speed..." -ForegroundColor Cyan
-          netsh int tcp set global autotuninglevel=disabled
-          netsh int tcp set global congestionprovider=ctcp
-          netsh int tcp set global ecncapability=enabled
-          netsh int tcp set global timestamps=disabled
-          # تحسين الـ MTU لتقليل تقطيع الصوت والفيديو
-          netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
-          Write-Host "✅ Network is now optimized!" -ForegroundColor Green
-
-      - name: ⚙️ CONFIGURING RDP (MAX SPEED)
-        run: |
+          Write-Host "🛠️ Setting up Low Latency RDP..." -ForegroundColor Yellow
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
-          # إخفاء علامة Test Mode بأمر قوي
-          bcdedit /set {current} testsigning off
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "MinEncryptionLevel" -Value 1
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
-          Start-Service TermService -ErrorAction SilentlyContinue
+          Start-Service -Name TermService -ErrorAction SilentlyContinue
+          Write-Host "✅ RDP Ready!" -ForegroundColor Green
 
       - name: 👤 CREATING USER
         run: |
+          Write-Host "👤 Creating user 'rdp555'..." -ForegroundColor Yellow
           $Password = ConvertTo-SecureString "BASHAR12!" -AsPlainText -Force
-          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires
+          New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires -Description "Ultra Fast RDP User"
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
+          Write-Host "✅ User created!" -ForegroundColor Green
 
-      - name: 🌐 TAILSCALE CONNECTION
+      - name: 🌐 SETTING UP NETWORK (TAILSCALE)
         env:
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
         run: |
+          if (-not $env:TAILSCALE_AUTH_KEY) {
+              Write-Host "❌ Error: TAILSCALE_AUTH_KEY secret is missing!" -ForegroundColor Red
+              exit 1
+          }
+          Write-Host "🌐 Installing Tailscale..." -ForegroundColor Yellow
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-rocket
+          Start-Sleep -Seconds 5
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-ultra --accept-routes
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
-          Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
+          Write-Host "------------------------------------------" -ForegroundColor Cyan
+          Write-Host "🌐 IP ADDRESS: $ip" -ForegroundColor White
+          Write-Host "👤 USERNAME: rdp555" -ForegroundColor White
+          Write-Host "🔐 PASSWORD: BASHAR12!" -ForegroundColor White
+          Write-Host "------------------------------------------" -ForegroundColor Cyan
 
       - name: ♾️ KEEP ALIVE
-        run: for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
+        run: |
+          $limit = 350
+          Write-Host "🚀 ULTRA RDP ACTIVE. Enjoy the speed!" -ForegroundColor Green
+          for ($i = 1; $i -le $limit; $i++) {
+              Start-Sleep -Seconds 60
+          }
