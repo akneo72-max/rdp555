@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.6)
+name: 🚀 RDP555 CLEAN INTERFACE (NO TEST MODE)
 
 on:
   workflow_dispatch:
@@ -16,125 +16,80 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING GOD-MODE SYSTEM
-        run: |
-          Write-Host "🚀 STARTING THE MOST POWERFUL RDP CONFIGURATION..." -ForegroundColor Cyan
-          exit 0
+      - name: 🎯 INITIALIZING CLEAN SYSTEM
+        run: Write-Host "🚀 STARTING CLEAN INTERFACE MODE..." -ForegroundColor Cyan
 
-      - name: 🏎️ ULTIMATE CPU & POWER TWEAKS
+      - name: 🛡️ KILLING TEST MODE WATERMARK (THE SMART WAY)
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
-          powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
-          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
-          Write-Host "✅ CPU Unlocked!" -ForegroundColor Green
-          exit 0
-
-      - name: 🛡️ KILLING WATERMARK (FORCE HIDE)
-        run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "🚫 Force Hiding Test Mode & Build Watermarks..." -ForegroundColor Yellow
+          Write-Host "🚫 Hiding Test Mode Watermark..." -ForegroundColor Yellow
           
-          # 1. تعديلات السجل العميقة لإخفاء النصوص
+          # 1. محاولة تعطيلها عبر السجل (Registry)
           reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
-          reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows" /v DisplayVersion /t REG_DWORD /d 0 /f
+          reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
           
-          # 2. سكربت برمجي لإخفاء نافذة العلامة المائية من الذاكرة
-          $code = @"
-          using System;
-          using System.Runtime.InteropServices;
-          public class WatermarkKiller {
-              [DllImport("user32.dll")]
-              public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-              [DllImport("user32.dll")]
-              public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-              public static void Hide() {
-                  IntPtr hShell = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null);
-                  if (hShell != IntPtr.Zero) {
-                      IntPtr hView = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "BaseWindow", null);
-                      ShowWindow(hView, 0);
-                  }
-              }
-          }
-          "@
-          Add-Type -TypeDefinition $code
-          [WatermarkKiller]::Hide()
+          # 2. أمر bcdedit الأساسي (للاحتياط)
+          bcdedit /set testsigning off
           
-          # 3. إعادة تشغيل المستكشف لتحديث الواجهة
-          Stop-Process -Name explorer -Force
+          # 3. سكربت لتحديث سطح المكتب والمستكشف فوراً لإخفاء العلامة
+          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
           Start-Sleep -Seconds 2
           Start-Process explorer
           
-          Write-Host "✅ Watermark removal attempt completed!" -ForegroundColor Green
-          exit 0
+          Write-Host "✅ Watermark should be hidden now!" -ForegroundColor Green
 
-      - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
+      - name: 🏎️ APPLYING PRO PERFORMANCE TWEAKS
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          $pagefile = Get-CimInstance Win32_ComputerSystem
-          Set-CimInstance -CimInstance $pagefile -Property @{AutomaticManagedPagefile = $False}
-          $pagefileSetting = Get-CimInstance Win32_PageFileSetting
-          if ($pagefileSetting) {
-              Set-CimInstance -CimInstance $pagefileSetting -Property @{InitialSize = 24576; MaximumSize = 32768}
-          } else {
-              New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = "C:\pagefile.sys"; InitialSize = 24576; MaximumSize = 32768}
-          }
-          exit 0
+          Write-Host "⚡ Applying Lightning Speed Tweaks..." -ForegroundColor Cyan
+          powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+          reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          # زيادة الرام الافتراضي
+          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
+          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=20480
 
-      - name: 💾 MASSIVE STORAGE CONFIGURATION (48TB TOTAL)
+      - name: 💾 CREATING GIANT STORAGE (34TB, 12TB, 2TB)
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
           attach vdisk
           create partition primary
-          format fs=ntfs quick label="TITAN_34TB"
+          format fs=ntfs quick label="ULTRA_STORAGE_34TB"
           assign letter=E
           create vdisk file="C:\Disk_12TB.vhd" maximum=12582912 type=expandable
           attach vdisk
           create partition primary
-          format fs=ntfs quick label="MID_12TB"
+          format fs=ntfs quick label="MID_STORAGE_12TB"
           assign letter=F
           create vdisk file="C:\Disk_2TB.vhd" maximum=2097152 type=expandable
           attach vdisk
           create partition primary
-          format fs=ntfs quick label="DEV_2TB"
+          format fs=ntfs quick label="STORAGE_2TB"
           assign letter=G
           "@ | diskpart
-          exit 0
 
-      - name: ⚙️ FINALIZING RDP CONFIG
+      - name: ⚙️ CONFIGURING RDP (ULTRA SPEED)
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
-          Start-Service TermService
-          exit 0
+          Start-Service TermService -ErrorAction SilentlyContinue
 
-      - name: 👤 CREATING GOD-MODE USER
+      - name: 👤 CREATING USER
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
           $Password = ConvertTo-SecureString "BASHAR12!" -AsPlainText -Force
           New-LocalUser -Name "rdp555" -Password $Password -AccountNeverExpires
           Add-LocalGroupMember -Group "Administrators" -Member "rdp555"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp555"
-          exit 0
 
       - name: 🌐 TAILSCALE CONNECTION
         env:
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-godmode
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-clean
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
-          exit 0
 
       - name: ♾️ KEEP ALIVE
-        run: |
-          for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
-          exit 0
+        run: for ($i = 1; $i -le 350; $i++) { Start-Sleep -Seconds 60 }
