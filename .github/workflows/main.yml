@@ -1,4 +1,4 @@
-name: 🚀 RDP555 CLEAN INTERFACE (NO TEST MODE)
+name: 🚀 RDP555 PRO-TWEAKED (ULTRA FAST + CHRIS TITUS TWEAKS)
 
 on:
   workflow_dispatch:
@@ -16,35 +16,37 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING CLEAN SYSTEM
-        run: Write-Host "🚀 STARTING CLEAN INTERFACE MODE..." -ForegroundColor Cyan
+      - name: 🎯 INITIALIZING PRO SYSTEM
+        run: Write-Host "🚀 STARTING PRO-TWEAKED MODE..." -ForegroundColor Cyan
 
-      - name: 🛡️ KILLING TEST MODE WATERMARK (THE SMART WAY)
+      - name: 🛠️ APPLYING CHRIS TITUS & SYSTEM TWEAKS
         run: |
-          Write-Host "🚫 Hiding Test Mode Watermark..." -ForegroundColor Yellow
+          Write-Host "⚡ Running Chris Titus Tech Tweaks & System Optimization..." -ForegroundColor Yellow
           
-          # 1. محاولة تعطيلها عبر السجل (Registry)
-          reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
-          reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
-          
-          # 2. أمر bcdedit الأساسي (للاحتياط)
-          bcdedit /set testsigning off
-          
-          # 3. سكربت لتحديث سطح المكتب والمستكشف فوراً لإخفاء العلامة
-          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-          Start-Sleep -Seconds 2
-          Start-Process explorer
-          
-          Write-Host "✅ Watermark should be hidden now!" -ForegroundColor Green
-
-      - name: 🏎️ APPLYING PRO PERFORMANCE TWEAKS
-        run: |
-          Write-Host "⚡ Applying Lightning Speed Tweaks..." -ForegroundColor Cyan
+          # 1. تفعيل وضع الأداء الأقصى وإلغاء قيود الطاقة
+          powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+          
+          # 2. تطبيق تويكات النظام العميقة (Registry Tweaks) لسرعة البرق
+          # تقليل وقت استجابة الماوس والكيبورد والقوائم
+          reg add "HKCU\Control Panel\Desktop" /v MenuShowDelay /t REG_SZ /d 0 /f
           reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
-          # زيادة الرام الافتراضي
+          
+          # 3. تعطيل الـ Telemetry والخدمات المزعجة نهائياً
+          reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f
+          
+          # 4. محاكاة عمل أدوات مثل DumpApps و Optimizer
+          $services = @("SysMain", "DiagTrack", "WSearch", "WerSvc", "wuauserv", "bits")
+          foreach($s in $services) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          
+          Write-Host "✅ System Tweaks Applied!" -ForegroundColor Green
+
+      - name: 🧠 EXTREME RAM BOOST (24GB VIRTUAL RAM)
+        run: |
+          Write-Host "🧠 Boosting Virtual RAM for Heavy Dev Work..." -ForegroundColor Yellow
           wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
-          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=20480
+          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=20480,MaximumSize=24576
+          Write-Host "✅ 24GB Virtual RAM Ready!" -ForegroundColor Green
 
       - name: 💾 CREATING GIANT STORAGE (34TB, 12TB, 2TB)
         run: |
@@ -66,10 +68,11 @@ jobs:
           assign letter=G
           "@ | diskpart
 
-      - name: ⚙️ CONFIGURING RDP (ULTRA SPEED)
+      - name: ⚙️ CONFIGURING RDP (ULTRA LOW LATENCY)
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
+          bcdedit /set {current} testsigning off
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
           Start-Service TermService -ErrorAction SilentlyContinue
 
@@ -87,7 +90,7 @@ jobs:
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-clean
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-pro
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
 
