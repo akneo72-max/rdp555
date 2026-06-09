@@ -1,4 +1,4 @@
-name: 🚀 RDP555 DEV-WORKSTATION (ROBLOX STUDIO READY)
+name: 🚀 RDP555 DATA CENTER MODE (48TB TOTAL STORAGE)
 
 on:
   workflow_dispatch:
@@ -16,56 +16,67 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING DEVELOPER MODE
-        run: Write-Host "🚀 STARTING DEV-WORKSTATION FOR PROGRAMMERS..." -ForegroundColor Cyan
+      - name: 🎯 INITIALIZING DATA CENTER SYSTEM
+        run: Write-Host "🚀 STARTING DATA CENTER MODE WITH 48TB TOTAL STORAGE..." -ForegroundColor Cyan
 
-      - name: 🛠️ SYSTEM CORE OPTIMIZATION (FOR HEAVY APPS)
+      - name: 💾 CREATING GIANT VIRTUAL DISKS (34TB, 12TB, 2TB)
         run: |
-          Write-Host "🧠 Reconfiguring System for Heavy Development..." -ForegroundColor Yellow
-          # جعل المعالج يركز على التطبيقات الأمامية (Roblox Studio) بنسبة 100%
-          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 26 /f
+          Write-Host "💽 Creating 3 Giant Virtual Hard Disks..." -ForegroundColor Yellow
           
-          # تفعيل "Hardware Acceleration" للبرامج عبر المعالج (Software Emulation)
-          reg add "HKCU\Software\Microsoft\Avalon.Graphics" /v DisableHWAcceleration /t REG_DWORD /d 0 /f
-          
-          # زيادة الـ RAM الافتراضي إلى أقصى حد ممكن لتجنب الـ Crash
-          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
-          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=20480
-          Write-Host "✅ System Cores Optimized!" -ForegroundColor Green
-
-      - name: 💾 CREATING GIANT STORAGE DISKS (34TB, 12TB, 2TB)
-        run: |
-          # إنشاء الأقراص كما طلبت سابقاً لتنظيم مشاريع البرمجة
+          # 1. إنشاء القرص الأول: 34TB (Drive E:)
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
           attach vdisk
           create partition primary
           format fs=ntfs quick label="ULTRA_STORAGE_34TB"
           assign letter=E
+          "@ | diskpart
+          Write-Host "✅ 34TB Disk Created as (E:)" -ForegroundColor Green
+
+          # 2. إنشاء القرص الثاني: 12TB (Drive F:)
+          @"
           create vdisk file="C:\Disk_12TB.vhd" maximum=12582912 type=expandable
           attach vdisk
           create partition primary
           format fs=ntfs quick label="MID_STORAGE_12TB"
           assign letter=F
+          "@ | diskpart
+          Write-Host "✅ 12TB Disk Created as (F:)" -ForegroundColor Green
+
+          # 3. إنشاء القرص الثالث: 2TB (Drive G:)
+          @"
           create vdisk file="C:\Disk_2TB.vhd" maximum=2097152 type=expandable
           attach vdisk
           create partition primary
           format fs=ntfs quick label="STORAGE_2TB"
           assign letter=G
           "@ | diskpart
+          Write-Host "✅ 2TB Disk Created as (G:)" -ForegroundColor Green
 
-      - name: 🏎️ EXTREME GRAPHICS & NETWORK TWEAKS
+      - name: 🏎️ HARDWARE & RAM BOOST (ULTRA MODE)
         run: |
-          Write-Host "📡 Reducing Latency for Remote Control..." -ForegroundColor Cyan
-          # تقليل تأخير الشبكة لأقصى حد لضمان سلاسة حركة الماوس
-          netsh int tcp set global autotuninglevel=experimental
-          netsh int tcp set global congestionprovider=ctcp
-          
-          # إيقاف كافة التأثيرات البصرية في ويندوز لتوفير الجهد لـ Roblox Studio
-          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
-          Write-Host "✅ Graphics Emulation Ready!" -ForegroundColor Green
+          Write-Host "🧠 Boosting Virtual RAM and CPU Priority..." -ForegroundColor Yellow
+          wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
+          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=12288,MaximumSize=16384
+          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          Write-Host "✅ Hardware Tweaks Applied!" -ForegroundColor Green
 
-      - name: ⚙️ CONFIGURING RDP (ULTRA SPEED)
+      - name: 🧹 TOTAL DEBLOAT & PERFORMANCE
+        run: |
+          Write-Host "🧹 Stripping Windows for Maximum Speed..." -ForegroundColor Yellow
+          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes")
+          foreach($s in $kill) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          Get-AppxPackage -AllUsers | where {$_.Name -notlike "*Calculator*" -and $_.Name -notlike "*Paint*"} | Remove-AppxPackage -ErrorAction SilentlyContinue
+          Write-Host "✅ System is now Lightweight!" -ForegroundColor Green
+
+      - name: 🛰️ ZERO-LATENCY NETWORK TWEAKS
+        run: |
+          netsh int tcp set global autotuninglevel=disabled
+          netsh int tcp set global congestionprovider=ctcp
+          netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
+          Write-Host "✅ Network Optimized!" -ForegroundColor Green
+
+      - name: ⚙️ CONFIGURING RDP (MAX SPEED)
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
@@ -87,7 +98,7 @@ jobs:
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-dev
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-datacenter
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
 
