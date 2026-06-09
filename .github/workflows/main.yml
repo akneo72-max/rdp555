@@ -1,4 +1,4 @@
-name: 🚀 RDP555 ULTIMATE PERFORMANCE (MAX POWER)
+name: 🚀 RDP555 DEV-WORKSTATION (ROBLOX STUDIO READY)
 
 on:
   workflow_dispatch:
@@ -16,43 +16,26 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING MAX POWER SYSTEM
-        run: Write-Host "🚀 STARTING ULTIMATE PERFORMANCE MODE..." -ForegroundColor Cyan
+      - name: 🎯 INITIALIZING DEVELOPER MODE
+        run: Write-Host "🚀 STARTING DEV-WORKSTATION FOR PROGRAMMERS..." -ForegroundColor Cyan
 
-      - name: ⚡ ENABLING ULTIMATE PERFORMANCE & KILLING BATTERY LIMITS
+      - name: 🛠️ SYSTEM CORE OPTIMIZATION (FOR HEAVY APPS)
         run: |
-          Write-Host "🔋 Disabling Power Saving & Enabling Ultimate Performance..." -ForegroundColor Yellow
+          Write-Host "🧠 Reconfiguring System for Heavy Development..." -ForegroundColor Yellow
+          # جعل المعالج يركز على التطبيقات الأمامية (Roblox Studio) بنسبة 100%
+          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 26 /f
           
-          # 1. تفعيل خطة "الأداء الأقصى" المخفية
-          powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
-          powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+          # تفعيل "Hardware Acceleration" للبرامج عبر المعالج (Software Emulation)
+          reg add "HKCU\Software\Microsoft\Avalon.Graphics" /v DisableHWAcceleration /t REG_DWORD /d 0 /f
           
-          # 2. تعطيل وضع السكون والسبات تماماً
-          powercfg /x -hibernate-timeout-ac 0
-          powercfg /x -sleep-timeout-ac 0
-          powercfg /hibernate off
-          
-          # 3. منع المعالج من خفض الأداء (Disable Power Throttling)
-          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
-          
-          # 4. ضبط النظام "لأفضل أداء" (Adjust for Best Performance)
-          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
-          
-          Write-Host "✅ System is now on MAX POWER!" -ForegroundColor Green
-
-      - name: 🧠 EXTREME RAM & CPU TUNING
-        run: |
-          Write-Host "🧠 Tuning Memory & CPU for Zero Lag..." -ForegroundColor Yellow
-          # زيادة الرام الافتراضي إلى 20GB
+          # زيادة الـ RAM الافتراضي إلى أقصى حد ممكن لتجنب الـ Crash
           wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
           wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=20480
-          
-          # تحسين جدولة المهام لسرعة الاستجابة
-          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
-          Write-Host "✅ Memory & CPU Tuned!" -ForegroundColor Green
+          Write-Host "✅ System Cores Optimized!" -ForegroundColor Green
 
       - name: 💾 CREATING GIANT STORAGE DISKS (34TB, 12TB, 2TB)
         run: |
+          # إنشاء الأقراص كما طلبت سابقاً لتنظيم مشاريع البرمجة
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
           attach vdisk
@@ -71,14 +54,18 @@ jobs:
           assign letter=G
           "@ | diskpart
 
-      - name: 🧹 SYSTEM CLEANUP (DEBLOAT)
+      - name: 🏎️ EXTREME GRAPHICS & NETWORK TWEAKS
         run: |
-          Write-Host "🧹 Removing background clutter..." -ForegroundColor Yellow
-          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes")
-          foreach($s in $kill) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
-          Write-Host "✅ Background services cleared!" -ForegroundColor Green
+          Write-Host "📡 Reducing Latency for Remote Control..." -ForegroundColor Cyan
+          # تقليل تأخير الشبكة لأقصى حد لضمان سلاسة حركة الماوس
+          netsh int tcp set global autotuninglevel=experimental
+          netsh int tcp set global congestionprovider=ctcp
+          
+          # إيقاف كافة التأثيرات البصرية في ويندوز لتوفير الجهد لـ Roblox Studio
+          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
+          Write-Host "✅ Graphics Emulation Ready!" -ForegroundColor Green
 
-      - name: ⚙️ CONFIGURING RDP (LOW LATENCY)
+      - name: ⚙️ CONFIGURING RDP (ULTRA SPEED)
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
@@ -100,7 +87,7 @@ jobs:
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-max
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-dev
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
 
