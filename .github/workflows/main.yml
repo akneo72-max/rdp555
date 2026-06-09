@@ -1,4 +1,4 @@
-name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.7)
+name: 🚀 RDP555 GOD-MODE (ULTRA WORKSTATION V10.6)
 
 on:
   workflow_dispatch:
@@ -27,16 +27,45 @@ jobs:
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
           reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
+          Write-Host "✅ CPU Unlocked!" -ForegroundColor Green
           exit 0
 
       - name: 🛡️ KILLING WATERMARK (FORCE HIDE)
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
+          Write-Host "🚫 Force Hiding Test Mode & Build Watermarks..." -ForegroundColor Yellow
+          
+          # 1. تعديلات السجل العميقة لإخفاء النصوص
           reg add "HKCU\Control Panel\Desktop" /v PaintDesktopVersion /t REG_DWORD /d 0 /f
-          bcdedit /set testsigning off
+          reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows" /v DisplayVersion /t REG_DWORD /d 0 /f
+          
+          # 2. سكربت برمجي لإخفاء نافذة العلامة المائية من الذاكرة
+          $code = @"
+          using System;
+          using System.Runtime.InteropServices;
+          public class WatermarkKiller {
+              [DllImport("user32.dll")]
+              public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+              [DllImport("user32.dll")]
+              public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+              public static void Hide() {
+                  IntPtr hShell = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null);
+                  if (hShell != IntPtr.Zero) {
+                      IntPtr hView = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "BaseWindow", null);
+                      ShowWindow(hView, 0);
+                  }
+              }
+          }
+          "@
+          Add-Type -TypeDefinition $code
+          [WatermarkKiller]::Hide()
+          
+          # 3. إعادة تشغيل المستكشف لتحديث الواجهة
           Stop-Process -Name explorer -Force
           Start-Sleep -Seconds 2
           Start-Process explorer
+          
+          Write-Host "✅ Watermark removal attempt completed!" -ForegroundColor Green
           exit 0
 
       - name: 🧠 EXTREME MEMORY MANAGEMENT (32GB VIRTUAL RAM)
@@ -72,24 +101,6 @@ jobs:
           format fs=ntfs quick label="DEV_2TB"
           assign letter=G
           "@ | diskpart
-          exit 0
-
-      - name: 📦 INSTALLING DEV TOOLS (AUTO-SETUP)
-        run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          Write-Host "🛠️ Installing VS Code, Node.js, Discord, and Roblox Studio..." -ForegroundColor Yellow
-          
-          # تثبيت Chocolatey أولاً
-          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          
-          # تثبيت البرامج المطلوبة
-          choco install vscode nodejs discord -y
-          
-          # تحميل Roblox Studio بشكل منفصل (لأنه لا يوجد في Choco دائماً بشكل مباشر)
-          Invoke-WebRequest -Uri "https://setup.rbxcdn.com/RobloxStudioLauncherBeta.exe" -OutFile "$env:TEMP\RobloxStudio.exe"
-          Start-Process "$env:TEMP\RobloxStudio.exe" -ArgumentList "/quiet" -Wait
-          
-          Write-Host "✅ All tools are installed and ready!" -ForegroundColor Green
           exit 0
 
       - name: ⚙️ FINALIZING RDP CONFIG
