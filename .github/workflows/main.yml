@@ -1,4 +1,4 @@
-name: 🚀 RDP555 TITAN MODE (1TB STORAGE + MAX SPEED)
+name: 🚀 RDP555 EXTREME ROCKET MODE (V3)
 
 on:
   workflow_dispatch:
@@ -16,53 +16,50 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING TITAN SYSTEM
-        run: Write-Host "🚀 STARTING TITAN MODE WITH 1TB STORAGE..." -ForegroundColor Cyan
+      - name: 🎯 INITIALIZING EXTREME SYSTEM
+        run: Write-Host "🚀 STARTING ROCKET MODE..." -ForegroundColor Cyan
 
-      - name: 💾 CREATING 1TB VIRTUAL DISK
+      - name: 🏎️ HARDWARE & RAM OPTIMIZATION (VIRTUAL RAM BOOST)
         run: |
-          Write-Host "💽 Creating 1TB Virtual Hard Disk..." -ForegroundColor Yellow
-          $vhdPath = "C:\1TB_Storage.vhd"
-          # إنشاء ملف قرص افتراضي بمساحة 1024 جيجابايت
-          @"
-          create vdisk file="$vhdPath" maximum=1048576 type=expandable
-          attach vdisk
-          create partition primary
-          format fs=ntfs quick label="TITAN_STORAGE"
-          assign letter=E
-          "@ | diskpart
-          Write-Host "✅ 1TB Disk Created and Mounted as Drive (E:)" -ForegroundColor Green
-
-      - name: 🏎️ HARDWARE & RAM BOOST (VIRTUAL RAM)
-        run: |
-          Write-Host "🧠 Boosting Virtual RAM to 16GB..." -ForegroundColor Yellow
+          Write-Host "🧠 Boosting Virtual RAM and CPU Priority..." -ForegroundColor Yellow
+          # زيادة الـ PageFile (الرام الافتراضي) ليعطي ثباتاً في المهام الثقيلة
           wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
           wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=12288,MaximumSize=16384
+          
+          # جعل المعالج يركز 100% على البرامج (Background Services Priority)
           reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          
+          # تعطيل استهلاك الرام في الـ Cache غير الضروري
+          reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Memory Management" /v LargeSystemCache /t REG_DWORD /d 0 /f
           Write-Host "✅ Hardware Tweaks Applied!" -ForegroundColor Green
 
-      - name: 🧹 TOTAL DEBLOAT & PERFORMANCE
+      - name: 🧹 TOTAL DEBLOAT (REMOVING EVERYTHING USELESS)
         run: |
-          Write-Host "🧹 Stripping Windows for Maximum Speed..." -ForegroundColor Yellow
-          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes")
+          Write-Host "🧹 Stripping Windows to the bone..." -ForegroundColor Yellow
+          # إيقاف خدمات التحديث والبحث والتقارير نهائياً
+          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "StiSvc", "Themes")
           foreach($s in $kill) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          
+          # إزالة كافة تطبيقات ويندوز المزعجة دفعة واحدة
           Get-AppxPackage -AllUsers | where {$_.Name -notlike "*Calculator*" -and $_.Name -notlike "*Paint*"} | Remove-AppxPackage -ErrorAction SilentlyContinue
-          # تعطيل الحركات البصرية لتسريع الواجهة
-          Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Value "0"
           Write-Host "✅ System is now Lightweight!" -ForegroundColor Green
 
       - name: 🛰️ ZERO-LATENCY NETWORK TWEAKS
         run: |
+          Write-Host "📡 Optimizing Network for Rocket Speed..." -ForegroundColor Cyan
           netsh int tcp set global autotuninglevel=disabled
           netsh int tcp set global congestionprovider=ctcp
           netsh int tcp set global ecncapability=enabled
+          netsh int tcp set global timestamps=disabled
+          # تحسين الـ MTU لتقليل تقطيع الصوت والفيديو
           netsh interface ipv4 set subinterface "Ethernet" mtu=1500 store=persistent
-          Write-Host "✅ Network Optimized!" -ForegroundColor Green
+          Write-Host "✅ Network is now optimized!" -ForegroundColor Green
 
-      - name: ⚙️ CONFIGURING RDP (ULTRA SPEED)
+      - name: ⚙️ CONFIGURING RDP (MAX SPEED)
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
+          # إخفاء علامة Test Mode بأمر قوي
           bcdedit /set {current} testsigning off
           netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389 profile=any
           Start-Service TermService -ErrorAction SilentlyContinue
@@ -81,7 +78,7 @@ jobs:
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-titan
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-rocket
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
 
