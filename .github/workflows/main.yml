@@ -1,4 +1,4 @@
-name: 🚀 RDP555 PRO-TWEAKED (ULTRA FAST + CHRIS TITUS TWEAKS)
+name: 🚀 RDP555 ULTIMATE PERFORMANCE (MAX POWER)
 
 on:
   workflow_dispatch:
@@ -16,39 +16,42 @@ jobs:
     timeout-minutes: 360
     
     steps:
-      - name: 🎯 INITIALIZING PRO SYSTEM
-        run: Write-Host "🚀 STARTING PRO-TWEAKED MODE..." -ForegroundColor Cyan
+      - name: 🎯 INITIALIZING MAX POWER SYSTEM
+        run: Write-Host "🚀 STARTING ULTIMATE PERFORMANCE MODE..." -ForegroundColor Cyan
 
-      - name: 🛠️ APPLYING CHRIS TITUS & SYSTEM TWEAKS
+      - name: ⚡ ENABLING ULTIMATE PERFORMANCE & KILLING BATTERY LIMITS
         run: |
-          Write-Host "⚡ Running Chris Titus Tech Tweaks & System Optimization..." -ForegroundColor Yellow
+          Write-Host "🔋 Disabling Power Saving & Enabling Ultimate Performance..." -ForegroundColor Yellow
           
-          # 1. تفعيل وضع الأداء الأقصى وإلغاء قيود الطاقة
+          # 1. تفعيل خطة "الأداء الأقصى" المخفية
           powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
           powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
           
-          # 2. تطبيق تويكات النظام العميقة (Registry Tweaks) لسرعة البرق
-          # تقليل وقت استجابة الماوس والكيبورد والقوائم
-          reg add "HKCU\Control Panel\Desktop" /v MenuShowDelay /t REG_SZ /d 0 /f
-          reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          # 2. تعطيل وضع السكون والسبات تماماً
+          powercfg /x -hibernate-timeout-ac 0
+          powercfg /x -sleep-timeout-ac 0
+          powercfg /hibernate off
           
-          # 3. تعطيل الـ Telemetry والخدمات المزعجة نهائياً
-          reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f
+          # 3. منع المعالج من خفض الأداء (Disable Power Throttling)
+          reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f
           
-          # 4. محاكاة عمل أدوات مثل DumpApps و Optimizer
-          $services = @("SysMain", "DiagTrack", "WSearch", "WerSvc", "wuauserv", "bits")
-          foreach($s in $services) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          # 4. ضبط النظام "لأفضل أداء" (Adjust for Best Performance)
+          reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f
           
-          Write-Host "✅ System Tweaks Applied!" -ForegroundColor Green
+          Write-Host "✅ System is now on MAX POWER!" -ForegroundColor Green
 
-      - name: 🧠 EXTREME RAM BOOST (24GB VIRTUAL RAM)
+      - name: 🧠 EXTREME RAM & CPU TUNING
         run: |
-          Write-Host "🧠 Boosting Virtual RAM for Heavy Dev Work..." -ForegroundColor Yellow
+          Write-Host "🧠 Tuning Memory & CPU for Zero Lag..." -ForegroundColor Yellow
+          # زيادة الرام الافتراضي إلى 20GB
           wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False
-          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=20480,MaximumSize=24576
-          Write-Host "✅ 24GB Virtual RAM Ready!" -ForegroundColor Green
+          wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=20480
+          
+          # تحسين جدولة المهام لسرعة الاستجابة
+          reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
+          Write-Host "✅ Memory & CPU Tuned!" -ForegroundColor Green
 
-      - name: 💾 CREATING GIANT STORAGE (34TB, 12TB, 2TB)
+      - name: 💾 CREATING GIANT STORAGE DISKS (34TB, 12TB, 2TB)
         run: |
           @"
           create vdisk file="C:\Disk_34TB.vhd" maximum=35651584 type=expandable
@@ -68,7 +71,14 @@ jobs:
           assign letter=G
           "@ | diskpart
 
-      - name: ⚙️ CONFIGURING RDP (ULTRA LOW LATENCY)
+      - name: 🧹 SYSTEM CLEANUP (DEBLOAT)
+        run: |
+          Write-Host "🧹 Removing background clutter..." -ForegroundColor Yellow
+          $kill = @("wuauserv", "bits", "dosvc", "WSearch", "SysMain", "WerSvc", "Themes")
+          foreach($s in $kill) { Stop-Service $s -Force -ErrorAction SilentlyContinue; Set-Service $s -StartupType Disabled }
+          Write-Host "✅ Background services cleared!" -ForegroundColor Green
+
+      - name: ⚙️ CONFIGURING RDP (LOW LATENCY)
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
@@ -90,7 +100,7 @@ jobs:
           $msiPath = "$env:TEMP\tailscale.msi"
           Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi" -OutFile $msiPath
           Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -Wait
-          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-pro
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=rdp555-max
           $ip = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
           Write-Host "🌐 IP: $ip | USER: rdp555 | PASS: BASHAR12!" -ForegroundColor White
 
